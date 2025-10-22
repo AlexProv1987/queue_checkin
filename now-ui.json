@@ -1,0 +1,18 @@
+{
+  "components": {
+    "x-1210821-queue-checkin": {
+      "innerComponents": [],
+      "uiBuilder": {
+        "associatedTypes": [
+          "global.core",
+          "global.landing-page"
+        ],
+        "label": "My Component",
+        "tileIcon": "./tile-icon/generic-tile-icon.svg",
+        "description": "A description of my component",
+        "category": "primitives"
+      }
+    }
+  },
+  "scopeName": "x_1210821_queue_0"
+}

@@ -1,0 +1,32 @@
+@import '@servicenow/sass-kit/host';
+
+:host {
+    display: block;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.header__title {
+    font-weight: bold;
+    font-size: 50px;
+}
+
+.header__spacer {
+    flex: 1;
+}
+
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+	margin-top: 1rem;
+}
+
+now-card {
+	width: 100%;
+}
