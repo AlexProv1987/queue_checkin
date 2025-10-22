@@ -4,11 +4,22 @@
     display: block;
 }
 
-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	max-width: 1200px;
+	margin-bottom: 1.5rem;
 }
 
 .header__title {
@@ -16,17 +27,30 @@ header {
     font-size: 50px;
 }
 
-.header__spacer {
-    flex: 1;
+.header__actions {
+	display: flex;
+	gap: 12px;
 }
+
 
 .card-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	grid-template-columns: repeat(3, 1fr);
 	gap: 16px;
 	margin-top: 1rem;
 }
 
 now-card {
 	width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.page {
+  width: min(1200px, 100%);
 }
