@@ -14,7 +14,13 @@ import { createHttpEffect } from '@servicenow/ui-effect-http';
 
 const view = (state, { updateState, dispatch }) => {
 
-	const { items, loadingItems, updating, message } = state;
+	const {
+		items,
+		loadingItems,
+		updating,
+		message,
+		properties: { pageTitle, submitLabel, checkOutLabel, resetLabel },
+	} = state;
 
 	return (
 		<main>
@@ -32,86 +38,86 @@ const view = (state, { updateState, dispatch }) => {
 				</div>
 				{/**error/success msgs here */}
 				<div className="header">
-					<div className="header-title">My Queue Capacity</div>
+					<div className="header-title">{pageTitle}</div>
 
 					<div className="header-actions">
 						<now-button
 							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '5px' }}
+							style={{ marginRight: '3px' }}
 							tooltip-content="Save Changes"
 							size="md"
 							variant="primary"
-							label="Submit"
+							label={submitLabel}
 							on-click={() => { updateState({ updating: true }), dispatch('HTTP_SUBMIT') }}
 						/>
 						<now-button
 							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '5px' }}
+							style={{ marginRight: '3px' }}
 							tooltip-content="Reset to default for all queues"
 							size="md"
 							variant="primary"
-							label="Reset"
+							label={resetLabel}
 							on-click={() => { updateState({ updating: true }), dispatch('HTTP_RESET') }}
 						/>
 						<now-button
 							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '5px' }}
+							style={{ marginRight: '3px' }}
 							tooltip-content="Sets all queues to 0 Capacity"
 							size="md"
 							variant="primary"
-							label="Check Out"
+							label={checkOutLabel}
 							on-click={() => { updateState({ updating: true }), dispatch('HTTP_CHECK_OUT') }}
 						/>
 					</div>
 				</div>
-			<div>
-				{loadingItems ? (
-					<now-loader label="Loading..." size="lg" />
-				) : (
-					<div className="card-grid">
-						{items.map((item, index) => (
-							<now-card size="lg" key={index}>
-								<now-card-header
-									style={{ marginTop: '10px' }}
-									tagline={{ icon: 'document-outline', label: 'Queue' }}
-									heading={{ label: item.channel.display_value, size: 'md', }} />
-								<now-card-divider full-width />
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-										padding: '5px 0'
-									}}
-								>
-									<now-dropdown
-										disabled={updating ? true : false}
-										id={item.sys_id}
-										tooltip-content="Select Capacity"
-										select="single"
-										config-label={{ label: 'Capacity' }}
-										config-aria={{
-											trigger: { 'aria-label': 'Select an item' },
-											panel: { 'aria-label': 'Assigned to' }
-										}}
-										items={[0, 1, 2, 3, 4, 5].map(capacity => ({ id: `${item.sys_id}|${capacity}`, label: String(capacity) }))}
-										selected-items={[`${item.sys_id}|${item.max_capacity}`]}
-										manage-selected-items
+				<div>
+					{loadingItems ? (
+						<now-loader label="Loading..." size="lg" />
+					) : (
+						<div className="card-grid">
+							{items.map((item, index) => (
+								<now-card size="lg" key={index}>
+									<now-card-header
+										style={{ marginTop: '10px' }}
+										tagline={{ icon: 'document-outline', label: 'Queue' }}
+										heading={{ label: item.channel.display_value, size: 'md', }} />
+									<now-card-divider full-width />
+									<div
 										style={{
-											width: '80%',
-											margin: '8px 0',
-											'--now-dropdown-min-width': '100%'
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center',
+											padding: '5px 0'
 										}}
-									></now-dropdown>
-								</div>
-								<now-card-divider full-width />
-								<now-card-footer label={{ start: 'Last Updated', end: `${item.sys_updated_on}` }} />
-							</now-card>
+									>
+										<now-dropdown
+											disabled={updating ? true : false}
+											id={item.sys_id}
+											tooltip-content="Select Capacity"
+											select="single"
+											config-label={{ label: 'Capacity' }}
+											config-aria={{
+												trigger: { 'aria-label': 'Select an item' },
+												panel: { 'aria-label': 'Assigned to' }
+											}}
+											items={[0, 1, 2, 3, 4, 5].map(capacity => ({ id: `${item.sys_id}|${capacity}`, label: String(capacity) }))}
+											selected-items={[`${item.sys_id}|${item.max_capacity}`]}
+											manage-selected-items
+											style={{
+												width: '80%',
+												margin: '8px 0',
+												'--now-dropdown-min-width': '100%'
+											}}
+										></now-dropdown>
+									</div>
+									<now-card-divider full-width />
+									<now-card-footer label={{ start: 'Last Updated', end: `${item.sys_updated_on}` }} />
+								</now-card>
 
-						))}
-					</div>
-				)}
-			</div>
+							))}
+						</div>
+					)}
+				</div>
 			</div>
 		</main>
 	)
@@ -127,6 +133,41 @@ createCustomElement('x-1210821-queue-checkin', {
 		items: null,
 		loadingItems: true,
 		updating: false,
+	},
+	properties: {
+		pageTitle: {
+			default: 'My Queue Capacities',
+			schema: {
+				type: 'string',
+				title: 'Page Title',
+				description: 'Main header display'
+			}
+		},
+		submitLabel: {
+			default: 'Submit',
+			schema: {
+				type: 'string',
+				title: 'Submit Button',
+				description: 'Button Text'
+			}
+		},
+		checkOutLabel: {
+			default: 'Check Out',
+			schema: {
+				type: 'string',
+				title: 'Check out Button',
+				description: 'Button Text'
+			}
+		},
+		resetLabel: {
+			default: 'Reset',
+			schema: {
+				type: 'string',
+				title: 'Reset Button',
+				description: 'Button Text'
+			}
+		},
+
 	},
 	actionHandlers: {
 
