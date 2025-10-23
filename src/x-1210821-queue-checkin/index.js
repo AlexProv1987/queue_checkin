@@ -1,12 +1,12 @@
 //https://developer.servicenow.com/dev.do#!/reference/next-experience/yokohama/now-components/now-button/overview#slots
 //https://github.com/ServiceNowDevProgram/now-experience-component-examples/blob/quebec/src/checklist-example/example-checklist/actions.js
 //https://www.servicenow.com/community/next-experience-articles/component-and-data-resource-properties-in-ui-builder/ta-p/2331894
+
 import { createCustomElement, actionTypes, declarativeOperations } from '@servicenow/ui-core';
 import snabbdom from '@servicenow/ui-renderer-snabbdom';
 import '@servicenow/now-button';
 import '@servicenow/now-loader';
 import '@servicenow/now-alert';
-import '@servicenow/now-icon';
 import '@servicenow/now-card';
 import '@servicenow/now-dropdown';
 import styles from './styles.scss';
