@@ -1,15 +1,22 @@
 {
   "components": {
     "x-1210821-queue-checkin": {
-      "innerComponents": [],
+      "innerComponents": [
+        "now-button",
+        "now-loader",
+        "now-alert",
+        "now-icon",
+        "now-card",
+        "now-dropdown"
+      ],
       "uiBuilder": {
         "associatedTypes": [
           "global.core",
           "global.landing-page"
         ],
-        "label": "My Component",
+        "label": "Queue Management",
         "tileIcon": "./tile-icon/generic-tile-icon.svg",
-        "description": "A description of my component",
+        "description": "Allow users to manage queue.",
         "category": "primitives"
       }
     }

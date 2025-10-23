@@ -14,34 +14,57 @@ import { createHttpEffect } from '@servicenow/ui-effect-http';
 
 const view = (state, { updateState, dispatch }) => {
 
-	const { items, loadingItems, errors } = state;
+	const { items, loadingItems, updating, message } = state;
 
 	return (
 		<main>
 			<div className='page'>
+				<div className='alert-wrapper'>
+					{message && (
+						<now-alert
+							status={message.status}
+							icon={message.icon}
+							header={message.header}
+							content={message.content}
+							action={{ type: 'dismiss' }}
+						/>
+					)}
+				</div>
 				{/**error/success msgs here */}
 				<div className="header">
 					<div className="header__title">My Queue Capacity</div>
 
 					<div className="header__actions">
-						<now-button
-							tooltip-content="Save Changes"
-							size="md"
-							variant="primary"
-							label="Submit"
-						/>
-						<now-button
-							tooltip-content="Reset to default for all queues"
-							size="md"
-							variant="primary"
-							label="Reset"
-						/>
-						<now-button
-							tooltip-content="Sets all queues to 0 Capacity"
-							size="md"
-							variant="primary"
-							label="Check Out"
-						/>
+						{updating || loadingItems ? (
+							<now-loader />
+						) : (
+							<div>
+								<now-button
+									style={{ marginRight: '5px' }}
+									tooltip-content="Save Changes"
+									size="md"
+									variant="primary"
+									label="Submit"
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_SUBMIT') }}
+								/>
+								<now-button
+									style={{ marginRight: '5px' }}
+									tooltip-content="Reset to default for all queues"
+									size="md"
+									variant="primary"
+									label="Reset"
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_RESET') }}
+								/>
+								<now-button
+									style={{ marginRight: '5px' }}
+									tooltip-content="Sets all queues to 0 Capacity"
+									size="md"
+									variant="primary"
+									label="Check Out"
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_CHECK_OUT') }}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 				<div>
@@ -50,7 +73,7 @@ const view = (state, { updateState, dispatch }) => {
 					) : (
 						<div className="card-grid">
 							{items.map((item, index) => (
-								<now-card size="sm" key={index} sidebar={{ variant: 'primary' }}>
+								<now-card size="lg" key={index}>
 									<now-card-header
 										style={{ marginTop: '10px' }}
 										tagline={{ icon: 'document-outline', label: 'Queue' }}
@@ -65,6 +88,7 @@ const view = (state, { updateState, dispatch }) => {
 										}}
 									>
 										<now-dropdown
+											disabled={updating ? true : false}
 											id={item.sys_id}
 											tooltip-content="Select Capacity"
 											select="single"
@@ -102,15 +126,19 @@ createCustomElement('x-1210821-queue-checkin', {
 	styles,
 	initialState: {
 		user: null,
-		errors: null,
+		message: null,
 		items: null,
 		loadingItems: true,
+		updating: false,
 	},
-
 	actionHandlers: {
-		//runs on mount
+
 		[actionTypes.COMPONENT_BOOTSTRAPPED]: ({ dispatch }) => {
 			dispatch('HTTP_FETCH_USER');
+		},
+
+		'NOW_ALERT#ACTION_CLICKED': ({ action, updateState }) => {
+			updateState({ message: null })
 		},
 
 		HTTP_FETCH_USER: createHttpEffect('api/now/ui/user/current_user', {
@@ -146,17 +174,9 @@ createCustomElement('x-1210821-queue-checkin', {
 		FETCH_USER_ERROR: ({ action, updateState, }) => {
 			console.log(action.payload?.error?.message || 'Request failed')
 			const msg = action.payload?.error?.message || 'Request failed';
-			updateState({ loadingUsers: false, usersError: msg });
+			updateState({ loadingUsers: false, message: { status: 'critical', icon: 'circle-exclamation-fill', content: 'Error Occured During Fetch User' } });
 		},
 
-		//default onclick event for now-button
-		'NOW_BUTTON#CLICKED': ({ dispatch, action, state }) => {
-			console.log('clicked btn')
-			const { items } = state
-			console.log(items)
-		},
-
-		//default handler for selected item
 		'NOW_DROPDOWN#SELECTED_ITEMS_SET': ({ action, updateState, state }) => {
 			const payload = action.payload?.value?.[0];
 
@@ -169,8 +189,8 @@ createCustomElement('x-1210821-queue-checkin', {
 			if (!sys_id || !value)
 				return;
 
-			const items = state.items.map((it) =>
-				it.sys_id === sys_id ? { ...it, max_capacity: value } : it
+			const items = state.items.map((item) =>
+				item.sys_id === sys_id ? { ...item, max_capacity: value } : item
 			);
 
 			updateState({ items });
@@ -189,23 +209,24 @@ createCustomElement('x-1210821-queue-checkin', {
 
 		HTTP_FETCH_ITEMS_ERROR: ({ action, updateState }) => {
 			console.log(action.payload?.error?.message || 'Request failed')
-			//updateState({ loading: false, error: action.payload?.error?.message || 'Request failed' });
+			updateState({ message: { status: 'critical', icon: 'circle-exclamation-fill', content: 'Error Occured During Fetch Items' } })
 		},
 
-		//well test this tomorrow
-		HTTP_CHECK_IN: createHttpEffect('/api/x_your_scope/queues/check_in', {
+		HTTP_SUBMIT: createHttpEffect('/api/1210821/queue_management/update_capacity', {
 			method: 'POST',
-			successActionType: 'HTTP_CHECK_IN_SUCCESS',
-			errorActionType: 'HTTP_CHECK_IN_ERROR'
+			successActionType: 'HTTP_SUBMIT_SUCCESS',
+			errorActionType: 'HTTP_SUBMIT_ERROR'
 		}),
 
-		HTTP_CHECK_IN_SUCCESS: ({ action, updateState }) => {
+		HTTP_SUBMIT_SUCCESS: ({ action, updateState }) => {
 			console.log('results array:', action.payload.result)
+			updateState({ updating: false, message: { status: 'positive', icon: 'check-fill', content: 'Updated Succesfully!' } })
 			//updateState({ items: action.payload.result });
 		},
 
-		HTTP_CHECK_IN_ERROR: ({ action, updateState }) => {
+		HTTP_SUBMIT_ERROR: ({ action, updateState }) => {
 			console.log(action.payload?.error?.message || 'Request failed')
+			updateState({ updating: false, message: { status: 'critical', icon: 'circle-exclamation-fill', content: 'Error Occured During Submit' } })
 			//updateState({ loading: false, error: action.payload?.error?.message || 'Request failed' });
 		},
 
@@ -217,11 +238,31 @@ createCustomElement('x-1210821-queue-checkin', {
 
 		HTTP_CHECK_OUT_SUCCESS: ({ action, updateState }) => {
 			console.log('results array:', action.payload.result)
+			updateState({ updating: false, message: { status: 'positive', icon: 'check-fill', content: 'Updated Succesfully!' } })
 			//updateState({ items: action.payload.result });
 		},
 
 		HTTP_CHECK_OUT_ERROR: ({ action, updateState }) => {
 			console.log(action.payload?.error?.message || 'Request failed')
+			updateState({ updating: false, message: { status: 'critical', icon: 'circle-exclamation-fill', content: 'Error Occured During Check Out' } })
+			//updateState({ loading: false, error: action.payload?.error?.message || 'Request failed' });
+		},
+
+		HTTP_RESET: createHttpEffect('/api/x_your_scope/queues/check_out', {
+			method: 'POST',
+			successActionType: 'HTTP_RESET_SUCCESS',
+			errorActionType: 'HTTP_RESET_ERROR'
+		}),
+
+		HTTP_RESET_SUCCESS: ({ action, updateState }) => {
+			console.log('results array:', action.payload.result)
+			updateState({ updating: false, message: { status: 'positive', icon: 'check-fill', content: 'Updated Succesfully!' } })
+			//updateState({ items: action.payload.result });
+		},
+
+		HTTP_RESET_ERROR: ({ action, updateState }) => {
+			console.log(action.payload?.error?.message || 'Request failed')
+			updateState({ updating: false, message: { status: 'critical', icon: 'circle-exclamation-fill', content: 'Error Occured During Reset' } })
 			//updateState({ loading: false, error: action.payload?.error?.message || 'Request failed' });
 		},
 	},
