@@ -32,9 +32,9 @@ const view = (state, { updateState, dispatch }) => {
 				</div>
 				{/**error/success msgs here */}
 				<div className="header">
-					<div className="header__title">My Queue Capacity</div>
+					<div className="header-title">My Queue Capacity</div>
 
-					<div className="header__actions">
+					<div className="header-actions">
 						{updating || loadingItems ? (
 							<now-loader />
 						) : (
