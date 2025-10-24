@@ -41,33 +41,39 @@ const view = (state, { updateState, dispatch }) => {
 					<div className="header-title">{pageTitle}</div>
 
 					<div className="header-actions">
-						<now-button
-							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '3px' }}
-							tooltip-content="Save Changes"
-							size="md"
-							variant="primary"
-							label={submitLabel}
-							on-click={() => { updateState({ updating: true }), dispatch('HTTP_SUBMIT') }}
-						/>
-						<now-button
-							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '3px' }}
-							tooltip-content="Reset to default for all queues"
-							size="md"
-							variant="primary"
-							label={resetLabel}
-							on-click={() => { updateState({ updating: true }), dispatch('HTTP_RESET') }}
-						/>
-						<now-button
-							disabled={updating || loadingItems ? true : false}
-							style={{ marginRight: '3px' }}
-							tooltip-content="Sets all queues to 0 Capacity"
-							size="md"
-							variant="primary"
-							label={checkOutLabel}
-							on-click={() => { updateState({ updating: true }), dispatch('HTTP_CHECK_OUT') }}
-						/>
+						{updating ? (
+							<now-loader label="Updating..." size="lg" />
+						) : (
+							<div>
+								<now-button
+									disabled={loadingItems ? true : false}
+									style={{ marginRight: '3px' }}
+									tooltip-content="Save Changes"
+									size="md"
+									variant="primary"
+									label={submitLabel}
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_SUBMIT') }}
+								/>
+								<now-button
+									disabled={loadingItems ? true : false}
+									style={{ marginRight: '3px' }}
+									tooltip-content="Reset to default for all queues"
+									size="md"
+									variant="primary"
+									label={resetLabel}
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_RESET') }}
+								/>
+								<now-button
+									disabled={loadingItems ? true : false}
+									style={{ marginRight: '3px' }}
+									tooltip-content="Sets all queues to 0 Capacity"
+									size="md"
+									variant="primary"
+									label={checkOutLabel}
+									on-click={() => { updateState({ updating: true }), dispatch('HTTP_CHECK_OUT') }}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 				<div>
@@ -137,11 +143,6 @@ createCustomElement('x-1210821-queue-checkin', {
 	properties: {
 		pageTitle: {
 			default: 'My Queue Capacities',
-			schema: {
-				type: 'string',
-				title: 'Page Title',
-				description: 'Main header display'
-			}
 		},
 		submitLabel: {
 			default: 'Submit',
@@ -166,8 +167,7 @@ createCustomElement('x-1210821-queue-checkin', {
 				title: 'Reset Button',
 				description: 'Button Text'
 			}
-		},
-
+		}
 	},
 	actionHandlers: {
 
