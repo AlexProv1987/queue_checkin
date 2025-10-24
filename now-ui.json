@@ -27,6 +27,30 @@
           "fieldType": "string",
           "required": true,
           "defaultValue": "My Queue Capacities"
+        },
+        {
+          "name": "submitLabel",
+          "label": "Submit Label",
+          "description": "Button Text",
+          "fieldType": "string",
+          "required": true,
+          "defaultValue": "Submit"
+        },
+        {
+          "name": "checkOutLabel",
+          "label": "Check Out Label",
+          "description": "Button Text",
+          "fieldType": "string",
+          "required": true,
+          "defaultValue": "Check Out"
+        },
+        {
+          "name": "resetLabel",
+          "label": "Reset Label",
+          "description": "Button Texty",
+          "fieldType": "string",
+          "required": true,
+          "defaultValue": "Reset"
         }
       ]
     }
