@@ -14,21 +14,21 @@
           "global.core",
           "global.landing-page"
         ],
-        "properties":[
-          {
-           "name":"pageTitle",
-           "label":"Page Title",
-           "description":"Main header display",
-           "fieldType":"string",
-           "required":"true",
-           "defaultValue":"My Queue Capacities"
-          }
-        ],
         "label": "Queue Management",
         "tileIcon": "./tile-icon/generic-tile-icon.svg",
         "description": "Allow users to manage queue.",
         "category": "primitives"
-      }
+      },
+      "properties": [
+        {
+          "name": "pageTitle",
+          "label": "Page Title",
+          "description": "Main header display",
+          "fieldType": "string",
+          "required": true,
+          "defaultValue": "My Queue Capacities"
+        }
+      ]
     }
   },
   "scopeName": "x_1210821_queue_0"

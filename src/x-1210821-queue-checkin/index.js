@@ -143,6 +143,11 @@ createCustomElement('x-1210821-queue-checkin', {
 	properties: {
 		pageTitle: {
 			default: 'My Queue Capacities',
+			schema: {
+				type: 'string',
+				title: 'Header Text',
+				description: 'Main Header'
+			}
 		},
 		submitLabel: {
 			default: 'Submit',
